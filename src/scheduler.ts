@@ -94,12 +94,12 @@ module Scheduler {
 			var l = this.left(i);
 			var r = this.right(i);
 
-			if (l <= this.heapSize && this.heapArray[l].nextExec < this.heapArray[i].nextExec) {
+			if (l < this.heapSize && this.heapArray[l].nextExec < this.heapArray[i].nextExec) {
 				var smallest = l;
 			}
 			else { smallest = i; }
 
-			if (r <= this.heapSize &&
+			if (r < this.heapSize &&
 				this.heapArray[r].nextExec < this.heapArray[i].nextExec &&
 				this.heapArray[r].nextExec < this.heapArray[l].nextExec) {
 				var smallest = r;
