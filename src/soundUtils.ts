@@ -33,8 +33,8 @@ module SoundUtils {
 		}
 	}
 
-	export function play (sound, offset, audioCtx) {
-		sound.source.start(offset);
+	export function play (sound, when, audioCtx) {
+		sound.source.start(when);
 		sound.source = getData(sound.name, audioCtx);
 	}
 }

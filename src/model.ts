@@ -20,7 +20,6 @@ module Model {
 		expire = 0;
 		dim = new Utils.Dimension(700, 700);
 		ctx = (<HTMLCanvasElement>document.getElementById("example")).getContext("2d");
-		public static audioCtx = new AudioContext();
 
 		constructor(public center: Utils.Point,
 			public color: Utils.Color,
@@ -137,7 +136,7 @@ module Model {
 		}
 
 		play(offset) {
-			SoundUtils.play(Keys.sounds[this.bucket], offset, Instrument.audioCtx);
+			SoundUtils.play(Keys.sounds[this.bucket], offset, SoundUtils.audioCtx);
 		}
 	}
 
@@ -167,7 +166,7 @@ module Model {
 		}
 
 		play(offset) {
-			SoundUtils.play(Percussion.sounds[this.bucket], offset, Instrument.audioCtx);
+			SoundUtils.play(Percussion.sounds[this.bucket], offset, SoundUtils.audioCtx);
 		}
 	}
 
@@ -197,7 +196,7 @@ module Model {
 		}
 
 		play(offset) {
-			SoundUtils.play(Bass.sounds[this.bucket], offset, Instrument.audioCtx);
+			SoundUtils.play(Bass.sounds[this.bucket], offset, SoundUtils.audioCtx);
 		}
 	}
 
@@ -227,7 +226,7 @@ module Model {
 		}
 
 		play(offset) {
-			SoundUtils.play(Strings.sounds[this.bucket], offset, Instrument.audioCtx);
+			SoundUtils.play(Strings.sounds[this.bucket], offset, SoundUtils.audioCtx);
 		}
 
 		draw() {
@@ -274,7 +273,7 @@ module Model {
 		}
 
 		play(offset) {
-			SoundUtils.play(Lead.sounds[this.bucket], offset, Instrument.audioCtx);
+			SoundUtils.play(Lead.sounds[this.bucket], offset, SoundUtils.audioCtx);
 		}
 	}
 
@@ -290,7 +289,7 @@ module Model {
 			this.setRecRate(recurs);
 			this.newNote();
 			this.inst.play(0);
-			this.nextExec = currentTime + this.interval;
+			this.nextExec = SoundUtils.audioCtx.currentTime + this.interval;
 		}
 
 		setRecRate(r) {
@@ -312,8 +311,8 @@ module Model {
 		}
 
 		schedule() {
-			this.inst.play(this.nextExec - currentTime);
-			setTimeout(this.newNote(), this.nextExec - currentTime);
+			this.inst.play(this.nextExec);
+			setTimeout(this.newNote(), this.nextExec - SoundUtils.audioCtx.currentTime);
 			this.nextExec += this.interval;
 		}
 
@@ -357,9 +356,11 @@ module Model {
 		}
 
 		removeNote() {
-			// removes last repeating note
+			// removes last repeating note from the animation queue
+			// and invokes it's shutdown method
+			// so the scheduler will remove it from the sound playing queue
 			if (this.notes.length > 0) {
-				this.notes.pop().shutdown()
+				this.notes.pop().shutdown();
 			}
 		}
 

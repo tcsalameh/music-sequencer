@@ -2,21 +2,26 @@
 /// <reference path="view.ts" />
 /// <reference path="utils.ts" />
 /// <reference path="soundUtils.ts" />
+/// <reference path="scheduler.ts" />
 
 var canvas = <HTMLCanvasElement> document.getElementById("example")
 var ctx = canvas.getContext("2d")
 
 var audioCtx = new AudioContext();
 
-SoundUtils.loadAll(Model.Keys.keySounds, audioCtx);
-SoundUtils.loadAll(Model.Percussion.percSounds, audioCtx);
-SoundUtils.loadAll(Model.Bass.bassSounds, audioCtx);
-SoundUtils.loadAll(Model.Strings.stringSounds, audioCtx);
-SoundUtils.loadAll(Model.Lead.leadSounds, audioCtx);
-
 var TIME_SIG = new Model.TimeSignature(4, 4);
 var bpm = 120
 var currentInstrument = Model.ITypes[0];
+
+var control = new Model.Cc();
+var scheduler = new Scheduler.Scheduler();
+
+
+SoundUtils.loadAll(Model.Keys.sounds, audioCtx);
+SoundUtils.loadAll(Model.Percussion.sounds, audioCtx);
+SoundUtils.loadAll(Model.Bass.sounds, audioCtx);
+SoundUtils.loadAll(Model.Strings.sounds, audioCtx);
+SoundUtils.loadAll(Model.Lead.sounds, audioCtx);
 
 enum KeyCodes {
 	UNDO = 32,
@@ -28,8 +33,6 @@ enum KeyCodes {
 	INC_BPM = 190
 }
 
-var control = new Model.Cc();
-
 var genNewNote = function(event: MouseEvent) {
 	var canvas_p = new Utils.Point(event.pageX, event.pageY);
 	var r = new Model.Repeater(currentInstrument.type,
@@ -38,6 +41,7 @@ var genNewNote = function(event: MouseEvent) {
 						 TIME_SIG,
 						 bpm)
 	control.addNote(r);
+	scheduler.add(r);
 }
 
 canvas.addEventListener("mouseup", genNewNote, false);
@@ -81,4 +85,5 @@ window.onkeydown = function (e) {
 
 window.addEventListener("keyup", keyPressed, false);
 
+scheduler.start();
 View.start();

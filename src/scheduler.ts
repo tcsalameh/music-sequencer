@@ -1,4 +1,5 @@
 /// <reference path="model.ts" />
+/// <reference path="soundUtils.ts" />
 
 // When instantiated, every instrument object also sets 
 // when it will play next.
@@ -19,14 +20,18 @@ module Scheduler {
 			this.queue = new MinHeap(heapArray);
 		}
 
+		add(r: Model.Repeater) {
+			this.queue.add(r);
+		}
+
 		run() {
 			if (this.keepRunning) {
 				while (this.queue.heapSize > 0 && 
-					   this.queue.getMin().nextExec < currentTime + Scheduler.lookahead) { 
+					   this.queue.getMin().nextExec < SoundUtils.audioCtx.currentTime + Scheduler.lookahead) { 
 					//compare next exec to current time and lookahead
 					if (this.queue.getMin().doSchedule) {
 						var r = this.queue.getMin();
-						r.schedule(); // current time needed, also knows about next exec
+						r.schedule(); // knows about next exec time
 						this.queue.heapify();
 					}
 					else {
