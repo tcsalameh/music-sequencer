@@ -12,8 +12,8 @@ module Scheduler {
 
 	export class Scheduler {
 		public queue: MinHeap;
-		public static interval: number = 25;
-		public static lookahead: number = 100;
+		public static interval: number = 25; // ms, b/c window runs on ms
+		public static lookahead: number = 0.1; //s, b/c audio context timer is in seconds
 		public keepRunning: boolean = true;
 
 		constructor(heapArray: Model.Repeater[] = []) {
@@ -32,7 +32,7 @@ module Scheduler {
 					if (this.queue.getMin().doSchedule) {
 						var r = this.queue.getMin();
 						r.schedule(); // knows about next exec time
-						this.queue.heapify();
+						this.queue.rootHeapify(0); // re-build the heap
 					}
 					else {
 						this.queue.extractMin();
@@ -54,22 +54,32 @@ module Scheduler {
 		constructor(heapArray: Model.Repeater[] = []) {
 			this.heapArray = heapArray
 			this.heapSize = heapArray.length
-		}
-
-		add(i: Model.Repeater) {
-			
+			this.buildMinHeap();
 		}
 
 		left(index: number) {
-			return 2*index + 1
+			return 2 * index + 1
 		}
 
 		right(index: number) {
 			return 2 * index + 2
 		}
 
-		extractMin() {
+		parent(index: number) {
+			return (index % 2 == 0) ? (index - 2) / 2 : (index - 1) / 2;
+		}
 
+		add(r: Model.Repeater) {
+			this.heapSize = this.heapArray.push(r);
+			this.childHeapify(this.heapSize - 1);
+		}
+
+		extractMin() {
+			this.heapArray[0], this.heapArray[this.heapSize-1] = this.heapArray[this.heapSize-1], this.heapArray[0];
+			var r = this.heapArray.pop();
+			this.heapSize -= 1;
+			this.rootHeapify(0);
+			return r;
 		}
 
 		getMin() {
@@ -79,12 +89,41 @@ module Scheduler {
 			return null;
 		}
 
-		heapify() {
+		rootHeapify(i) {
+			// starts from root and works down as needed to re-order heap
+			var l = this.left(i);
+			var r = this.right(i);
 
+			if (l <= this.heapSize && this.heapArray[l].nextExec < this.heapArray[i].nextExec) {
+				var smallest = l;
+			}
+			else { smallest = i; }
+
+			if (r <= this.heapSize &&
+				this.heapArray[r].nextExec < this.heapArray[i].nextExec &&
+				this.heapArray[r].nextExec < this.heapArray[l].nextExec) {
+				var smallest = r;
+			}
+
+			if (smallest != i) {
+				this.heapArray[i], this.heapArray[smallest] = this.heapArray[smallest], this.heapArray[i];
+				this.rootHeapify(smallest);
+			}
 		}
 
-		repair() {
+		childHeapify(i) {
+			// starts from child and works up as needed to re-order heap
+			var parent = this.parent(i);
+			if (parent >= 0 && this.heapArray[parent].nextExec > this.heapArray[i].nextExec) {
+				this.heapArray[parent], this.heapArray[i] = this.heapArray[i], this.heapArray[parent];
+				this.childHeapify(parent);
+			}
+		}
 
+		buildMinHeap() {
+			for (var i = Math.floor(this.heapSize / 2) - 1; i >= 0; i--) {
+				this.rootHeapify(i);
+			}
 		}
 	}
 }
