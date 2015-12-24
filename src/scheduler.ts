@@ -1,12 +1,22 @@
 /// <reference path="model.ts" />
 /// <reference path="soundUtils.ts" />
 
-// When instantiated, every instrument object also sets 
-// when it will play next.
+/* When instantiated, every repeater object also sets 
+when it will play next.
 
-// Then, it gets pushed onto a minHeap
-// the minHeap is keyed by the value of when each object will play next
-// The scheduler 
+Then, it gets pushed onto a queue implemented as a MinHeap
+This queue is keyed by the value of when each object will play next.
+When running, the scheduler looks at the first object in the queue,
+and if it needs to be scheduled it calls its schedule method.
+This schedules the audio to play and sets the next play time of the object again.
+Then we rebuild the heap to account for the updated play time.
+If it doesn't need to be scheduled anymore, it extracts it from the heap
+and rebuilds the heap.
+
+If it's looked at all the objects in its lookahead window (or the queue is empty),
+the scheduler waits for a certain interval (setTimeout) before waking up again
+to schedule the next events.
+*/
 
 module Scheduler {
 

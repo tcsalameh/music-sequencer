@@ -6,10 +6,9 @@ module Model {
 
 		constructor(public num: number, public denom: number) { }
 
-		msPerBar(bpm: number) {
-			var whole = (60.0 / bpm) * 4; // whole note duration
-			var wholems = whole * 1000.0; // whole ms duration
-			var duration = Math.floor(this.num * wholems / this.denom); // total time
+		sPerBar(bpm: number) {
+			var whole = (60.0 / bpm) * 4; // whole note duration, seconds
+			var duration = this.num * whole / this.denom; // total time, seconds
 			return duration
 		}
 	}
@@ -278,7 +277,7 @@ module Model {
 	}
 
 	export class Repeater {
-		interval: number = 1000;
+		interval: number = 1; // default 1s
 		task = null;
 		inst: Instrument = null;
 		ctx = (<HTMLCanvasElement> document.getElementById("example")).getContext("2d");
@@ -297,7 +296,7 @@ module Model {
 			if (this.recurs < 0) {
 				this.recurs = 1;
 			}
-			this.interval = this.timesig.msPerBar(this.bpm) * this.recurs;
+			this.interval = this.timesig.sPerBar(this.bpm) * this.recurs;
 		}
 
 		setBpm(bpm) {
@@ -312,7 +311,11 @@ module Model {
 
 		schedule() {
 			this.inst.play(this.nextExec);
-			setTimeout(this.newNote(), this.nextExec - SoundUtils.audioCtx.currentTime);
+			// next execution time for the sound is a double in seconds
+			setTimeout(this.newNote(), Math.floor((this.nextExec - SoundUtils.audioCtx.currentTime)*1000));
+			// wait passed to setTimeout needs to be in integer milliseconds
+			// precision for the animation is not as important as for the sound
+			// so using setTimeout is ok
 			this.nextExec += this.interval;
 		}
 
