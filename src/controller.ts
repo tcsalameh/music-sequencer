@@ -85,5 +85,5 @@ window.onkeydown = function (e) {
 
 window.addEventListener("keyup", keyPressed, false);
 
-scheduler.start();
+scheduler.run();
 View.start();

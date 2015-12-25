@@ -22,8 +22,8 @@ module Scheduler {
 
 	export class Scheduler {
 		public queue: MinHeap;
-		public static interval: number = 25; // ms, b/c window runs on ms
-		public static lookahead: number = 0.1; //s, b/c audio context timer is in seconds
+		public static interval: number = 25; // ms
+		public static lookahead: number = 100; //ms
 		public keepRunning: boolean = true;
 
 		constructor(heapArray: Model.Repeater[] = []) {
@@ -37,18 +37,19 @@ module Scheduler {
 		run() {
 			if (this.keepRunning) {
 				while (this.queue.heapSize > 0 && 
-					   this.queue.getMin().nextExec < SoundUtils.audioCtx.currentTime + Scheduler.lookahead) { 
+					   this.queue.getMin().nextExec < performance.now() + Scheduler.lookahead) { 
 					//compare next exec to current time and lookahead
 					if (this.queue.getMin().doSchedule) {
 						var r = this.queue.getMin();
-						r.schedule(); // knows about next exec time
+						r.schedule(); // resets exec time
 						this.queue.rootHeapify(0); // re-build the heap
 					}
 					else {
 						this.queue.extractMin();
 					}
 				}
-				setTimeout(function() { this.run() }, Scheduler.interval);
+				var self = this;
+				setTimeout(function() { self.run() }, Scheduler.interval);
 			}
 		}
 
@@ -57,7 +58,7 @@ module Scheduler {
 		}
 	}
 
-	class MinHeap {
+	export class MinHeap {
 		public heapArray: Model.Repeater[];
 		public heapSize: number = 0;
 
@@ -85,7 +86,7 @@ module Scheduler {
 		}
 
 		extractMin() {
-			this.heapArray[0], this.heapArray[this.heapSize-1] = this.heapArray[this.heapSize-1], this.heapArray[0];
+			[this.heapArray[0], this.heapArray[this.heapSize-1]] = [this.heapArray[this.heapSize-1], this.heapArray[0]];
 			var r = this.heapArray.pop();
 			this.heapSize -= 1;
 			this.rootHeapify(0);
@@ -116,7 +117,7 @@ module Scheduler {
 			}
 
 			if (smallest != i) {
-				this.heapArray[i], this.heapArray[smallest] = this.heapArray[smallest], this.heapArray[i];
+				[this.heapArray[i], this.heapArray[smallest]] = [this.heapArray[smallest], this.heapArray[i]];
 				this.rootHeapify(smallest);
 			}
 		}
@@ -125,7 +126,7 @@ module Scheduler {
 			// starts from child and works up as needed to re-order heap
 			var parent = this.parent(i);
 			if (parent >= 0 && this.heapArray[parent].nextExec > this.heapArray[i].nextExec) {
-				this.heapArray[parent], this.heapArray[i] = this.heapArray[i], this.heapArray[parent];
+				[this.heapArray[parent], this.heapArray[i]] = [this.heapArray[i], this.heapArray[parent]];
 				this.childHeapify(parent);
 			}
 		}

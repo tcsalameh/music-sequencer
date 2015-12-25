@@ -6,9 +6,10 @@ module Model {
 
 		constructor(public num: number, public denom: number) { }
 
-		sPerBar(bpm: number) {
+		msPerBar(bpm: number) {
 			var whole = (60.0 / bpm) * 4; // whole note duration, seconds
-			var duration = this.num * whole / this.denom; // total time, seconds
+			var wholems = whole*1000 // whole note duration, ms
+			var duration = this.num * wholems / this.denom; // total time, seconds
 			return duration
 		}
 	}
@@ -277,8 +278,7 @@ module Model {
 	}
 
 	export class Repeater {
-		interval: number = 1; // default 1s
-		task = null;
+		interval: number = 1000; // default 1s
 		inst: Instrument = null;
 		ctx = (<HTMLCanvasElement> document.getElementById("example")).getContext("2d");
 		nextExec: number = 0;
@@ -286,9 +286,9 @@ module Model {
 
 		constructor(public inst_type, public loc: Utils.Point, public recurs: number, public timesig: TimeSignature, public bpm: number) {
 			this.setRecRate(recurs);
-			this.newNote();
+			this.inst = new this.inst_type(this.loc);
 			this.inst.play(0);
-			this.nextExec = SoundUtils.audioCtx.currentTime + this.interval;
+			this.nextExec = performance.now() + this.interval;
 		}
 
 		setRecRate(r) {
@@ -296,7 +296,7 @@ module Model {
 			if (this.recurs < 0) {
 				this.recurs = 1;
 			}
-			this.interval = this.timesig.sPerBar(this.bpm) * this.recurs;
+			this.interval = this.timesig.msPerBar(this.bpm) * this.recurs;
 		}
 
 		setBpm(bpm) {
@@ -310,17 +310,14 @@ module Model {
 		}
 
 		schedule() {
-			this.inst.play(this.nextExec);
-			// next execution time for the sound is a double in seconds
-			setTimeout(this.newNote(), Math.floor((this.nextExec - SoundUtils.audioCtx.currentTime)*1000));
-			// wait passed to setTimeout needs to be in integer milliseconds
-			// precision for the animation is not as important as for the sound
-			// so using setTimeout is ok
+			this.inst.play(SoundUtils.audioCtx.currentTime + (this.nextExec - performance.now())/1000);
+			var self = this;
+			setTimeout(function() { self.inst = new self.inst_type(self.loc) }, Math.floor(this.nextExec - performance.now()));
 			this.nextExec += this.interval;
 		}
 
-		newNote() {
-			this.inst = new this.inst_type(this.loc);
+		shutdown() {
+			this.doSchedule = false;
 		}
 
 		move() {

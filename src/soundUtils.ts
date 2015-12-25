@@ -17,7 +17,7 @@ module SoundUtils {
 
 		request.onload = function() {
 			var audioData = request.response;
-			audioCtx.decodeAudioData(audioData).then(function(buffer) {
+			audioCtx.decodeAudioData(audioData, function(buffer) {
 				source.buffer = buffer;
 				source.connect(audioCtx.destination);
 			})
