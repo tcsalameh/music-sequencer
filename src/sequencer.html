@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<head>
+	<title>Sequencer/Visualizer</title>
+	<meta charset="utf-8">
+	<link href="css/roundslider.min.css" rel="stylesheet" />
+	<link href="css/controls.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="js/roundslider.min.js"></script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<canvas id="main_view" width="700" height="700">
+			Browser doesn't support canvas.
+		</canvas>
+
+		<div id = "controls">
+			<div class="controls-label">Volume</div>
+			<div class="control-knob" id="volume"></div>
+			<br>
+			<div class="controls-label">Frequency Cutoff</div>
+			<div class="controls-label">(Lowpass Filter)</div>
+			<div class="control-knob" id="lowpass"></div>
+			<br>
+			<div class="controls-label">Pan</div>
+			<div class="controls-label">(L/R)</div>
+			<div class="control-knob" id="pan"></div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+	$("#volume").roundSlider({
+		radius: 50,
+		min: 0,
+		max: 2,
+		value: 1,
+		step: 0.01,
+		width: 5,
+		handleSize: "+8",
+		circleShape: "pie",
+		sliderType: "min-range",
+		showTooltip: false,
+		keyboardAction: false,
+		startAngle: 315});
+
+	$("#lowpass").roundSlider({
+		radius: 50,
+		min: 20,
+		max: 5000,
+		value: 5000,
+		step: 100,
+		width: 5,
+		handleSize: "+8",
+		circleShape: "pie",
+		sliderType: "min-range",
+		showTooltip: false,
+		keyboardAction: false,
+		startAngle: 315});
+
+	$("#pan").roundSlider({
+		radius: 50,
+		min: -1,
+		max: 1,
+		value: 0,
+		step: 0.01,
+		width: 5,
+		handleSize: "+8",
+		circleShape: "pie",
+		keyboardAction: false,
+		startAngle: 315});
+
+	</script>
+
+	<script src="controller.js"></script>
+
+
+	<br>
+	<br>
+	<br>
+	<h3>Overview</h3>
+
+	<p>There are 5 instruments that can be played, which can be switched between with the left and right arrow keys. The name of the current instrument appears at the top of the screen.</p>
+
+	<p>The screen is subdivided into 16 rectangular sections. Each one has a particular sound mapped to it, by instrument. For instance, when the "Keys" instrument is selected, each of the 16 sections corresponds to a different note on a chromatic scale (from C to D#) when clicked. When "Percussion" is selected, these are mapped to various drum or percussive sounds.</p>
+
+	<ul>
+		<li>Click anywhere to generate a new repeating note.
+		<li>Delete last note(s) created: Spacebar.
+		<li>Change tempo (BPM): <kbd>&lt</kbd> and <kbd>&gt</kbd> on the keyboard
+		<li>Change "bar length": up and down arrow keys
+		<li>Switch between instruments: left and right arrow keys
+	</ul>
+
+	<p>When you click a region of the screen, it plays that note, and also sets it into a loop that will repeat that note. This means that you can build up melodies or rhythms that repeat over time. You can also control how often notes you create will repeat by instrument, by using the up and down arrow keys to adjust the number of musical bars in between repetitions. For instance, you could create a series of percussion notes that repeat every single bar, and then switch to the bass and create a 2-bar phrase to overlay on the drum loop. You could also have different repetition frequencies for different notes on the same instrument, because when you change the bar length it only applies to notes you create in the future (it doesn't retroactively change any existing notes).</p>
+
+	<p>The sliders control attributes for each instrument. The lowpass filter cuts off frequencies above a threshold; the lower it is, the more lower frequencies will be emphasized and higher ones cut out.</p>
+
+	<p><a href="https://github.com/tcsalameh/music-sequencer">Source code can be found here</a></p>
+	
+
+</body>
+</html>
