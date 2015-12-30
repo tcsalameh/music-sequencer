@@ -5,7 +5,8 @@ module SoundUtils {
 
 	export class Sound {
 		constructor(public name: string, public source,
-					public gain: number = 1, public pan: number = 0) {}
+					public gain: number = 1, public lp_filter: number = 5000,
+					public pan: number = 0) {}
 	}
 
 	export function getData(sound: Sound, audioCtx) {
@@ -26,6 +27,18 @@ module SoundUtils {
 					gainNode.gain.value = sound.gain;
 					lastNode.connect(gainNode);
 					lastNode = gainNode;
+				}
+				if (sound.lp_filter < 5000) {
+					var lowpf = audioCtx.createBiquadFilter();
+					lowpf.frequency.value = sound.lp_filter;
+					lastNode.connect(lowpf);
+					lastNode = lowpf;
+				}
+				if (sound.pan != 0) {
+					var panner = audioCtx.createStereoPanner();
+					panner.pan.value = sound.pan;
+					lastNode.connect(panner);
+					lastNode = panner;
 				}
 				lastNode.connect(audioCtx.destination);
 			})

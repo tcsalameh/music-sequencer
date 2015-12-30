@@ -19,7 +19,7 @@ module Model {
 		radius = 6;
 		expire = 0;
 		dim = new Utils.Dimension(700, 700);
-		ctx = (<HTMLCanvasElement>document.getElementById("example")).getContext("2d");
+		ctx = (<HTMLCanvasElement>document.getElementById("main_view")).getContext("2d");
 
 		constructor(public center: Utils.Point,
 			public color: Utils.Color,
@@ -280,7 +280,7 @@ module Model {
 	export class Repeater {
 		interval: number = 1000; // default 1s
 		inst: Instrument = null;
-		ctx = (<HTMLCanvasElement> document.getElementById("example")).getContext("2d");
+		ctx = (<HTMLCanvasElement> document.getElementById("main_view")).getContext("2d");
 		nextExec: number = 0;
 		doSchedule: boolean = true;
 
