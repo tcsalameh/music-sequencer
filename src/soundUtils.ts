@@ -28,9 +28,9 @@ module SoundUtils {
 					lastNode.connect(gainNode);
 					lastNode = gainNode;
 				}
-				if (sound.lp_filter < 5000) {
+				if (sound.lp_filter < 14) {
 					var lowpf = audioCtx.createBiquadFilter();
-					lowpf.frequency.value = sound.lp_filter;
+					lowpf.frequency.value = Math.floor(Math.pow(2, sound.lp_filter));
 					lastNode.connect(lowpf);
 					lastNode = lowpf;
 				}

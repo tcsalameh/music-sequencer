@@ -45,10 +45,10 @@
 
 	$("#lowpass").roundSlider({
 		radius: 50,
-		min: 20,
-		max: 5000,
-		value: 5000,
-		step: 100,
+		min: 5, // log_2 of 32 hz, lower range of hearing
+		max: 14, // log_2 of 16384 hz, near upper range of hearing
+		value: 14, // no cutoff at max
+		step: 0.1, // make smaller maybe?
 		width: 5,
 		handleSize: "+8",
 		circleShape: "pie",
