@@ -5,7 +5,7 @@ module SoundUtils {
 
 	export class Sound {
 		constructor(public name: string, public source,
-					public gain: number = 1, public lp_filter: number = 5000,
+					public gain: number = 1, public lp_filter: number = 14,
 					public pan: number = 0) {}
 	}
 
