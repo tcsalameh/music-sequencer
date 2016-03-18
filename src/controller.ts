@@ -14,7 +14,7 @@ var TIME_SIG = new Model.TimeSignature(4, 4);
 var bpm = 120
 var currentInstrument = Model.ITypes[0];
 
-var control = new Model.Cc();
+var animArray = new Model.Cc();
 var scheduler = new Scheduler.Scheduler();
 
 var volume = $("#volume").data("roundSlider");
@@ -78,7 +78,7 @@ var genNewNote = function(event: MouseEvent) {
 						 currentInstrument.bar,
 						 TIME_SIG,
 						 bpm)
-	control.addNote(r);
+	animArray.addNote(r);
 	scheduler.add(r);
 }
 
@@ -89,7 +89,7 @@ var keyPressed = function(event: KeyboardEvent) {
 
 	switch (code) {
 		case KeyCodes.UNDO:
-			control.removeNote();
+			animArray.removeNote();
 			break;
 		case KeyCodes.LEFT:
 			if (currentInstrument.id > 0) {
@@ -115,11 +115,11 @@ var keyPressed = function(event: KeyboardEvent) {
 		case KeyCodes.DEC_BPM:
 			if (bpm > 1)
 				bpm -= 1;
-			control.setBpm(bpm);
+			animArray.setBpm(bpm);
 			break;
 		case KeyCodes.INC_BPM:
 			bpm += 1
-			control.setBpm(bpm)
+			animArray.setBpm(bpm)
 	}
 }
 

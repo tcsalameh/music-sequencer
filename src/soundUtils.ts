@@ -1,6 +1,7 @@
 module SoundUtils {
-	
+
 	// go back to figure out compatibility
+	//Chrome & FF -> AudioContext() Safari -> webkitAudioContext()
 	export var audioCtx = new AudioContext();
 
 	export class Sound {

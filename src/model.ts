@@ -354,6 +354,14 @@ module Model {
 			// for repeater type
 			this.notes.push(note)
 		}
+		
+		setBpm(bpm) {
+			// sets bpm for all notes
+			this.bpm = bpm;
+			for (var note of this.notes) {
+				note.setBpm(this.bpm);
+			}
+		}
 
 		removeNote() {
 			// removes last repeating note from the animation queue
@@ -364,13 +372,6 @@ module Model {
 			}
 		}
 
-		setBpm(bpm) {
-			// sets bpm for all notes
-			this.bpm = bpm;
-			for (var note of this.notes) {
-				note.setBpm(this.bpm);
-			}
-		}
 	}
 
 }

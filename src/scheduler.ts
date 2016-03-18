@@ -25,6 +25,7 @@ module Scheduler {
 		public static interval: number = 25; // ms
 		public static lookahead: number = 100; //ms
 		public keepRunning: boolean = true;
+		public bpm: number = 120;
 
 		constructor(heapArray: Model.Repeater[] = []) {
 			this.queue = new MinHeap(heapArray);
@@ -32,7 +33,7 @@ module Scheduler {
 
 		add(r: Model.Repeater) {
 			this.queue.add(r);
-		}
+		} 
 
 		run() {
 			if (this.keepRunning) {

@@ -14,7 +14,7 @@ module View {
 	}
 
 	export function start() {
-		var timer = setTimeout(function() { anim(control.notes, ctx) }, 45)
+		var timer = setTimeout(function() { anim(animArray.notes, ctx) }, 45)
 	}
 
 	export function drawMessages(timesig, bpm, bar, cur_inst, ctx) {
@@ -33,7 +33,4 @@ module View {
 		ctx.font = "18px sans-serif";
 		ctx.fillText(cur_inst, 300, 20);
 	}
-
-
-
 }
