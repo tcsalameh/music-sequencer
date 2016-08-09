@@ -1,0 +1,32 @@
+body {
+    width: 850px;
+}
+
+.controls-label {
+    font-size: 16px;
+    font-family: Sans-Serif;
+    padding-bottom: 5px;
+}
+
+.control-knob .rs-range-color {
+    background-color: black;
+}
+
+.control-knob .rs-path-color {
+    background-color: #CFCFD1;
+}
+
+.control-knob .rs-border {
+    border-color: transparent;
+}
+
+.control-knob .rs-handle {
+    background-color: black;
+    border: 5px solid black;
+}
+
+#controls {
+    position: relative;
+    float: right;
+    background-color: #ffffff;
+}
